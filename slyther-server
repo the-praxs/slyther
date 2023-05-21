@@ -47,17 +47,17 @@ def handle_client(sock, addr, public, private):
     """
     contacts = load_contacts(private)
     contact_id = get_contact_id(addr[0], contacts)
-    
+
     if contact_id in contacts:
-        print_green("New connection from {}!".format(contacts[contact_id]["name"]))
+        print_green(f'New connection from {contacts[contact_id]["name"]}!')
     else:
-        print_green("New connection from {}!".format(contact_id))
-    
+        print_green(f"New connection from {contact_id}!")
+
     try:
         print(" > Performing key exchange...")
         client_public = RSA.import_key(receive(sock))
         print("    : Received public key.")
-        
+
         # Check fingerprint
         if contact_id in contacts and contacts[contact_id]["fingerprint"] is not None:
             print(contacts[contact_id]["fingerprint"])
@@ -84,11 +84,13 @@ def handle_client(sock, addr, public, private):
                             "recieved": True,
                             "contents": message.decode() }
         if contact_id in contacts:
-            # Edit message if untrusted 
+            # Edit message if untrusted
             if contacts[contact_id]["fingerprint"] is not None and not verify_fingerprint(client_public, contacts[contact_id]["fingerprint"]):
-                message_receipt = { "time": datetime.now().strftime("%m/%d/%y %I:%M%p"), 
-                                    "recieved": True,
-                                    "contents": "!UNTRUSTED! {} !UNTRUSTED!".format(message.decode()) }
+                message_receipt = {
+                    "time": datetime.now().strftime("%m/%d/%y %I:%M%p"),
+                    "recieved": True,
+                    "contents": f"!UNTRUSTED! {message.decode()} !UNTRUSTED!",
+                }
             contacts[contact_id]["messages"].append(message_receipt)
         else:
             contacts[contact_id] = {  "name": contact_id,
@@ -125,8 +127,8 @@ if __name__ == "__main__":
                     connection_thread.start()
                 except KeyboardInterrupt:
                     if confirm("\nAre you sure you'd like to close slyther-server? (Y/n) "):
-                       break 
+                       break
     except OSError:
-        print_red("Error: Failed to start slyther-server: Port {} in use.".format(PORT))
+        print_red(f"Error: Failed to start slyther-server: Port {PORT} in use.")
 
 

@@ -121,8 +121,8 @@ class Application:
         for contact_id in contacts:
             if contacts[contact_id]["name"] == name or contacts[contact_id]["ip"] == ip:
                 duplicate_id = contact_id
-                
-        
+
+
         if duplicate_id:
             print_yellow("\n--- Warning: Contact exists ---")
             print_yellow("Existing Contact:")
@@ -133,7 +133,9 @@ class Application:
             print("IP:", ip)
             print("Fingerprint:", fingerprint)
 
-            if confirm("\nUpdate contact information for {}? (Y/n) ".format(contacts[duplicate_id]["name"])):
+            if confirm(
+                f'\nUpdate contact information for {contacts[duplicate_id]["name"]}? (Y/n) '
+            ):
                 contacts[duplicate_id]["name"] = name
                 contacts[duplicate_id]["ip"] = ip
                 contacts[duplicate_id]["fingerprint"] = fingerprint
@@ -153,7 +155,9 @@ class Application:
         print_bar("DELETE CONTACT")
         display_messages(contacts)
         contact_id = get_recipient(contacts)
-        if confirm("Are you sure you would like do delete contact information for {}? (Y/n)".format(contacts[contact_id]["name"])):
+        if confirm(
+            f'Are you sure you would like do delete contact information for {contacts[contact_id]["name"]}? (Y/n)'
+        ):
             del contacts[contact_id]
             print_green("Contact deleted.\n")
             save_contacts(contacts, self.private)

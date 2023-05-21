@@ -30,7 +30,7 @@ def load_contacts(private):
         }
     """
     try:
-        with open(CONTACTS_DIR + "enc.key", "rb") as key_file:
+        with open(f"{CONTACTS_DIR}enc.key", "rb") as key_file:
             encrypted_key = key_file.read()
 
         with open(CONTACTS_PATH, "rb") as contacts_file:
@@ -45,7 +45,7 @@ def load_contacts(private):
         return {}
 
     key = decrypt_rsa(encrypted_key, private)
-    
+
     contacts_string = decrypt_aes(encrypted_contacts, key).decode()
     return json.loads(contacts_string)
 
@@ -58,14 +58,14 @@ def save_contacts(contacts, private):
     Args:
         contacts: The contacts dictionary to save.
     """
-    key = get_random_bytes(16) 
+    key = get_random_bytes(16)
     contacts_string = json.dumps(contacts)
 
     encrypted_contacts = encrypt_aes(contacts_string.encode(), key)
     encrypted_key = encrypt_rsa(key, private)
 
     try:
-        with open(CONTACTS_DIR + "enc.key", "wb") as key_file:
+        with open(f"{CONTACTS_DIR}enc.key", "wb") as key_file:
             key_file.write(encrypted_key)
 
         with open(CONTACTS_PATH, "wb") as contacts_file:
@@ -73,7 +73,7 @@ def save_contacts(contacts, private):
     except OSError:
         if not exists(CONTACTS_DIR):
             makedirs(CONTACTS_DIR)
-            with open(CONTACTS_DIR + "enc.key", "wb") as key_file:
+            with open(f"{CONTACTS_DIR}enc.key", "wb") as key_file:
                 key_file.write(encrypted_key)
             with open(CONTACTS_PATH, "wb") as contacts_file:
                 contacts_file.write(encrypted_contacts)
@@ -98,7 +98,9 @@ def display_contact(contact_id, contacts):
 def display_convo(contact):
     print_bar("CONVERSATION")
     for message in contact["messages"]:
-        print("{} {}: {}".format(message["time"], contact["name"] if message["recieved"] else "me", message["contents"]))
+        print(
+            f'{message["time"]} {contact["name"] if message["recieved"] else "me"}: {message["contents"]}'
+        )
     print()
 
 
@@ -107,7 +109,7 @@ def display_messages(contacts):
         contact = contacts[contact_id]
         if contact["messages"]:
             message = contact["messages"][-1]["contents"]
-            trimmed_msg = message if len(message) < 20 else (message[:27] + "...")
+            trimmed_msg = message if len(message) < 20 else f"{message[:27]}..."
             timestamp = contact["messages"][-1]["time"]
             print("{:10s}  >  {:30s}  <  {}".format(contact["name"], trimmed_msg, timestamp))
         else:

@@ -90,11 +90,11 @@ def recvall(sock, num_bytes):
     """
     received = bytes()
     while len(received) < num_bytes:
-        data = sock.recv(num_bytes - len(received))
-        if not data:
-            return None
-        received += data
+        if data := sock.recv(num_bytes - len(received)):
+            received += data
 
+        else:
+            return None
     return received
 
 

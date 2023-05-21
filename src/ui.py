@@ -47,7 +47,7 @@ def confirm(prompt):
 
 def input_default(prompt, default):
     """Displays the prompt, returns input (default if user enters nothing)."""
-    response = input("{} [{}]: ".format(prompt, default))
+    response = input(f"{prompt} [{default}]: ")
     return response if response else default
 
 
